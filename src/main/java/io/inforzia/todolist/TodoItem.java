@@ -16,30 +16,8 @@ public class TodoItem {
     private String item;
 
     @Column(name = "CREATED")
-    private Long created = System.currentTimeMillis()/1000;
+    private Long created = System.currentTimeMillis();
 
     @Column(name = "COMPLETED")
     private Boolean completed;
-
-    public void setId(Integer id){
-        this.id = id;
-    }
-    public Integer getId(){
-        return this.id;
-    }
-    public void setItem(String item){
-        this.item = item;
-    }
-    public String getItem(){
-        return item;
-    }
-    public Long getCreated(){
-        return this.created;
-    }
-    public void setCompleted(boolean Completed){
-        this.completed = Completed;
-    }
-    public boolean getCompleted(){
-        return completed;
-    }
 }
