@@ -3,7 +3,6 @@ package io.inforzia.todolist;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +12,14 @@ import java.util.List;
 @RestController
 @Slf4j
 public class TodoController {
-    @Autowired  //TODO 더 찾아보기
     private TodoItemRepository todoItemRepository;
 
+    public TodoController(TodoItemRepository todoItemRepository) {
+        this.todoItemRepository =  todoItemRepository;
+    }
+
     @PostMapping(path = "/todo", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> saveTodo(@RequestBody TodoItem todoItem) {
+    public ResponseEntity<TodoItem> saveTodo(@RequestBody TodoItem todoItem) {
         TodoItem savedTodo = todoItemRepository.save(todoItem);
         return ResponseEntity.ok(savedTodo);
     }
