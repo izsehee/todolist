@@ -19,52 +19,58 @@ public class TodoController {
     }
 
     @PostMapping(path = "/todo", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TodoItem> saveTodo(@RequestBody TodoItem todoItem) {
+    public ResponseEntity<TodoItem> postTodo(@RequestBody TodoItem todoItem) {
         TodoItem savedTodo = todoItemRepository.save(todoItem);
         return ResponseEntity.ok(savedTodo);
     }
 
     @PutMapping(path = "/todo/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void updateTodo(@PathVariable Integer id, @RequestBody TodoItem newTodoItem) {
+    public String putTodo(@PathVariable Integer id, @RequestBody TodoItem newTodoItem) {
         todoItemRepository.findById(id)
                 .map(todoItem -> {
                     todoItem.setItem(newTodoItem.getItem());
+                    todoItem.setCompleted(newTodoItem.getCompleted());
                     return todoItemRepository.save(todoItem);
                 })
                 .orElseGet(() -> {
                     newTodoItem.
                             setId(id);
-                    return todoItemRepository.save(newTodoItem);
+                    return todoItemRepository.save(newTodoItem); //TODO 예외던지기
                 });
+        return id + "번 TODO 수정";
     }
 
     @PatchMapping(path = "/todo/{id}/complete")
-    public void todoComplete(@PathVariable(value = "id") Integer id) {
+    public String patchTodoCompleted(@PathVariable(value = "id") Integer id) {
         todoItemRepository.findById(id)
                 .map(todoItem -> {
                     todoItem.setCompleted(true);
                     return todoItemRepository.save(todoItem);
                 });
+        return id + "번 TODO 수정";
     }
 
     @PatchMapping(path = "/todo/{id}/incomplete")
-    public void todoIncomplete(@PathVariable(value = "id") Integer id) {
+    public String patchTodoIncompleted(@PathVariable(value = "id") Integer id) {
         todoItemRepository.findById(id)
                 .map(todoItem -> {
                     todoItem.setCompleted(false);
                     return todoItemRepository.save(todoItem);
                 });
+        return id + "번 TODO 수정";
     }
 
     @DeleteMapping(path = "/todo/{id}")
-    public void deleteTodo(@PathVariable Integer id) {
+    public String deleteTodo(@PathVariable Integer id) {
         todoItemRepository.deleteById(id);
+        return id + "번 TODO 삭제";
     }
 
     @DeleteMapping(path = "/todo/completed")
-    public void delCompletedTodo() {
+    public String deleteTodo() {
         val test = new String();
         todoItemRepository.findByCompleted(true).stream().forEach(item -> deleteTodo(item.getId()));
+        return "완료된 TODO 삭제";
     }
 
     @GetMapping(path = "/todo/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,8 +80,11 @@ public class TodoController {
     }
 
     @GetMapping(path = "/todo", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TodoItem> all(@RequestParam(value = "completed") boolean isCompleted) {
-        return todoItemRepository.findByCompleted(isCompleted);
+    public List<TodoItem> getTodo(@RequestParam(value = "completed", required = false) Boolean isCompleted) {
+        if(isCompleted==null)
+            return todoItemRepository.findAll();
+        else
+            return todoItemRepository.findByCompleted(isCompleted);
     }
 
 }
