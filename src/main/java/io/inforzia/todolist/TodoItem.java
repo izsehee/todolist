@@ -20,4 +20,7 @@ public class TodoItem {
 
     @Column(name = "COMPLETED")
     private Boolean completed;
+
+    @Column(name = "USER")
+    private String user;
 }

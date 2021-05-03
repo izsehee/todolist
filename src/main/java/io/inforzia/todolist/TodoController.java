@@ -21,7 +21,8 @@ public class TodoController {
 
     @ApiOperation(value = "TODO 생성", notes = "해야할 일과 완료 여부를 작성하여 저장합니다.")
     @PostMapping(path = "/todo", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TodoItem> postTodo(@RequestBody TodoItem todoItem) {
+    public ResponseEntity<TodoItem> postTodo(@RequestHeader(value="authorization") String author, @RequestBody TodoItem todoItem) {
+        todoItem.setUser(author);
         TodoItem savedTodo = todoItemRepository.save(todoItem);
         return ResponseEntity.ok(savedTodo);
     }
@@ -95,5 +96,4 @@ public class TodoController {
         else
             return todoItemRepository.findByCompleted(isCompleted);
     }
-
 }
