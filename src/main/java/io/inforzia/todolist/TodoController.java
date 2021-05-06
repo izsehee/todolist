@@ -39,7 +39,7 @@ public class TodoController {
 
     @ApiOperation(value = "TODO 수정", notes = "해야할 일과 완료 여부를 수정하여 저장합니다.")
     @PutMapping(path = "/todo/{id}")
-    public String putTodo(@PathVariable Integer id, @RequestBody TodoItem newTodo){
+    public String putTodo(@RequestHeader(value="authorization") String author, @PathVariable Integer id, @RequestBody TodoItem newTodo){
         if(em.find(TodoItem.class, id)==null)
             throw new RestException();
         EntityTransaction tx = em.getTransaction();
@@ -54,7 +54,7 @@ public class TodoController {
 
     @ApiOperation(value = "TODO의 완료여부 변경", notes = "해당 TODO의 완료 여부를 completed로 변경합니다.")
     @PatchMapping(path = "/todo/{id}/complete")
-    public String patchTodoCompleted(@PathVariable(value = "id") Integer id){
+    public String patchTodoCompleted(@RequestHeader(value="authorization") String author, @PathVariable(value = "id") Integer id){
         if(em.find(TodoItem.class, id)==null)
             throw new RestException();
         EntityTransaction tx = em.getTransaction();
@@ -68,7 +68,7 @@ public class TodoController {
 
     @ApiOperation(value = "TODO의 완료여부 변경", notes = "해당 TODO의 완료 여부를 incompleted로 변경합니다.")
     @PatchMapping(path = "/todo/{id}/incomplete")
-    public String patchTodoIncompleted(@PathVariable(value = "id") Integer id){
+    public String patchTodoIncompleted(@RequestHeader(value="authorization") String author, @PathVariable(value = "id") Integer id){
         if(em.find(TodoItem.class, id)==null)
             throw new RestException();
         EntityTransaction tx = em.getTransaction();
@@ -82,7 +82,7 @@ public class TodoController {
 
     @ApiOperation(value = "TODO 삭제", notes = "해당 TODO를 삭제합니다.")
     @DeleteMapping(path = "/todo/{id}")
-    public String deleteTodo(@PathVariable Integer id){
+    public String deleteTodo(@RequestHeader(value="authorization") String author, @PathVariable Integer id){
         if(em.find(TodoItem.class, id)==null)
             throw new RestException();
         EntityTransaction tx = em.getTransaction();
@@ -96,7 +96,7 @@ public class TodoController {
 
     @ApiOperation(value = "TODO 삭제", notes = "완료된 TODO를 모두 삭제합니다.")
     @DeleteMapping(path = "/todo/completed")
-    public String deleteTodo() {
+    public String deleteTodo(@RequestHeader(value="authorization") String author) {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
 
@@ -110,7 +110,7 @@ public class TodoController {
 
     @ApiOperation(value = "TODO 조회", notes = "해당 TODO의 정보를 조회합니다.")
     @GetMapping(path = "/todo/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TodoItem getTodo(@PathVariable Integer id){
+    public TodoItem getTodo(@RequestHeader(value="authorization") String author, @PathVariable Integer id){
         if(em.find(TodoItem.class, id)==null)
             throw new RestException();
         return em.find(TodoItem.class, id);
@@ -118,7 +118,7 @@ public class TodoController {
 
     @ApiOperation(value = "TODO 조회", notes = "모든 TODO를 조회하거나 완료 여부로 조회합니다.")
     @GetMapping(path = "/todo", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TodoItem> getTodo(@RequestParam(value = "completed", required = false) Boolean isCompleted) {
+    public List<TodoItem> getTodo(@RequestHeader(value="authorization") String author, @RequestParam(value = "completed", required = false) Boolean isCompleted) {
         if(isCompleted==null)
             return em.createQuery("Select todo FROM TodoItem AS todo",
                     TodoItem.class).getResultList();
