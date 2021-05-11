@@ -8,6 +8,6 @@ public interface TodoItemDAO {
     TodoItem findById(int id);
     void save(TodoItem todoItem);
     void deleteById(int id);
-    void updateItem(int id, TodoItem todoItem);
-    void updateCompleted(int id, boolean isCompleted);
+//    void updateItem(int id, TodoItem todoItem); TODO 더 생각해보기
+//    void updateCompleted(int id, boolean isCompleted);
 }
