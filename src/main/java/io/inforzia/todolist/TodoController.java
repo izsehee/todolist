@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import springfox.documentation.service.Header;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -16,10 +15,9 @@ import java.util.List;
 @RestController
 @Slf4j
 public class TodoController {
+
     @Autowired
     private TodoService todoService;
-
-
 
     @ApiOperation(value = "TODO 생성", notes = "해야할 일과 완료 여부를 작성하여 저장합니다.")
     @PostMapping(path = "/todo", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -35,6 +33,8 @@ public class TodoController {
     @ApiOperation(value = "TODO 수정", notes = "해야할 일과 완료 여부를 수정하여 저장합니다.")
     @PutMapping(path = "/todo/{id}")
     public String updateTodo(@PathVariable Integer id, @RequestBody TodoItem newTodo){
+        if(todoService.getTodo(id)==null)
+            throw new TodoNotFoundException(id);
         todoService.updateItem(id, newTodo);
         return id + "번 TODO 수정";
     }
@@ -42,6 +42,8 @@ public class TodoController {
     @ApiOperation(value = "TODO의 완료여부 변경", notes = "해당 TODO의 완료 여부를 completed로 변경합니다.")
     @PatchMapping(path = "/todo/{id}/complete")
     public String updateTodoComp(@PathVariable(value = "id") Integer id){
+        if(todoService.getTodo(id)==null)
+            throw new TodoNotFoundException(id);
         todoService.updateCompleted(id, true);
         return id + "번 TODO 수정";
     }
@@ -49,6 +51,8 @@ public class TodoController {
     @ApiOperation(value = "TODO의 완료여부 변경", notes = "해당 TODO의 완료 여부를 incompleted로 변경합니다.")
     @PatchMapping(path = "/todo/{id}/incomplete")
     public String updateTodoIncomp(@PathVariable(value = "id") Integer id){
+        if(todoService.getTodo(id)==null)
+            throw new TodoNotFoundException(id);
         todoService.updateCompleted(id, false);
         return id + "번 TODO 수정";
     }
@@ -56,6 +60,8 @@ public class TodoController {
     @ApiOperation(value = "TODO 삭제", notes = "해당 TODO를 삭제합니다.")
     @DeleteMapping(path = "/todo/{id}")
     public String deleteTodo(@PathVariable Integer id){
+        if(todoService.getTodo(id)==null)
+            throw new TodoNotFoundException(id);
         todoService.deleteTodo(id);
         return id + "번 TODO 삭제";
     }
@@ -70,6 +76,8 @@ public class TodoController {
     @ApiOperation(value = "TODO 조회", notes = "해당 TODO의 정보를 조회합니다.")
     @GetMapping(path = "/todo/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TodoItem getTodo(@PathVariable Integer id){
+        if(todoService.getTodo(id)==null)
+            throw new TodoNotFoundException(id);
         return todoService.getTodo(id);
     }
 
