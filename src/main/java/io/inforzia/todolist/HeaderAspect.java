@@ -18,6 +18,6 @@ public class HeaderAspect {
     public void getHeader(){
         HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         userHeader = req.getHeader("authorization");
-        log.info(userHeader + " 로그인~~");
+        log.info(userHeader + " access");
     }
 }
